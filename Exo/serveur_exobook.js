@@ -16,11 +16,67 @@ MongoClient.connect(url, { useUnifiedTopology: true })
     console.log('Connected to MongoDB');
     const db = client.db(dbName);
 
-
      /**
      * FONCTION DE L'API
      */
 
+     // Route pour la mise en place de la base de données
+     app.get('/setup',async function (req, res) {
+      // Création de la collection "employees"
+      db.createCollection("employees");
+
+      // Insertion de plusieurs documents dans la collection "employees"
+      db.collection('employees').insertMany([
+        {
+          name: "John Doe",
+          age: 35,
+          job: "Manager",
+          salary: 80000
+       },
+       
+       {
+          name: "Jane Doe",
+          age: 32,
+          job: "Developer",
+          salary: 75000
+       },
+       
+       {
+          name: "Jim Smith",
+          age: 40,
+          job: "Manager",
+          salary: 85000
+       }
+      ], function (
+        err,
+        info
+      ) {
+        // En cas d'erreur, renvoie le statut d'erreur
+        res.status(err.status).res.send(info)
+      })
+    })
+
+    // Route pour la réinitialisation de la collection
+    app.get('/reset', function (req, res) {
+        // Suppression de la collection 'employees'
+        db.dropCollection('employees')
+        .then(
+          res.status(200).res.send("reset")
+        )
+        .catch(
+          res.status(500).res.send(res)
+        )
+     
+    })
+
+    /** 
+    * Écrivez une requête MongoDB pour trouver tous les documents dans la collection "employees".
+    */
+    app.get('/all', async function (req, res){
+      // Récupération de tous les documents dans la collection 'employees'
+      const data = await db.collection('employees').find({})
+      res.json( await data.toArray() );
+    });
 
 
 
