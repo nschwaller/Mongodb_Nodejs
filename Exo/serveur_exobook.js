@@ -16,12 +16,8 @@ MongoClient.connect(url, { useUnifiedTopology: true })
     console.log('Connected to MongoDB');
     const db = client.db(dbName);
 
-     /**
-     * FONCTION DE L'API
-     */
-
-     // Route pour la mise en place de la base de données
-     app.get('/setup',async function (req, res) {
+    // Route pour la mise en place de la base de données
+    app.get('/setup',async function (req, res) {
       // Création de la collection "employees"
       db.createCollection("employees");
 
@@ -79,7 +75,70 @@ MongoClient.connect(url, { useUnifiedTopology: true })
     });
 
 
+    /**
+     * Écrivez une requête pour trouver tous les documents où l'âge est supérieur à 33.
+     */
+    app.get('/allgt33', async function (req, res){
+      // Récupération des documents où l'âge est supérieur à 33
+      const data = await db.collection('employees').find({"age": { $gt: 33 }})
+      res.json( await data.toArray() );
+    });
 
+
+    /**
+     * Écrivez une requête pour trier les documents dans la collection "employees" par salaire décroissant.
+     */
+    app.get('/allsalarydesc', async function (req, res){
+      // Tri des documents par salaire décroissant
+      const data = await db.collection('employees').find({}).sort({"salary" : -1})
+      res.json( await data.toArray() );
+    });
+
+    /**
+     * Écrivez une requête pour sélectionner uniquement le nom et le job de chaque document.
+     */
+    app.get('/allonlynameandjob', async function (req, res){
+      // Récupération du nom et du poste pour chaque document
+      const data = await db.collection('employees').find({}, { projection: {nom: true, job : true}})
+      res.json( await data.toArray() );
+    });
+
+    /**
+     * Écrivez une requête pour compter le nombre d'employés par poste.
+     */
+    app.get('/countbyjob', async function (req, res){
+      // Grouper par poste et compter le nombre d'employés
+      const data = await 
+      db.collection('employees').aggregate([
+        {
+          $group: {
+            _id: "$job",
+            totalEmployees: { $sum: 1 }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            job: "$_id",
+            totalEmployees: 1
+          }
+        }
+      ])
+      res.json( await data.toArray() );
+    });
+
+    /**
+     * Écrivez une requête pour mettre à jour le salaire de tous les développeurs à 80000.
+     */
+    app.put('/updatedevsalaries',async function (req,res) {
+      // Mise à jour des salaires pour tous les développeurs
+      const data = await 
+      db.collection('employees').updateMany(
+        { job: "Developer" },
+        { $set: { salary: 80000 } }
+      )
+      res.json("updated to ");
+    })
 
     // Démarrage du serveur
     app.listen(port, () => {
