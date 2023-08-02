@@ -6,11 +6,12 @@ import {
   updateCarById,
   deleteCarById,
 } from '../controllers/carController';
+import authenticateToken from '../middleware/authenticateToken'; 
 
 const router = express.Router();
 
 // Route pour créer une nouvelle voiture
-router.post('/', createCar);
+router.post('/',authenticateToken, createCar);
 
 // Route pour récupérer toutes les voitures
 router.get('/', getAllCars);
@@ -19,9 +20,9 @@ router.get('/', getAllCars);
 router.get('/:id', getCarById);
 
 // Route pour mettre à jour une voiture par son ID
-router.put('/:id', updateCarById);
+router.put('/:id',authenticateToken, updateCarById);
 
 // Route pour supprimer une voiture par son ID
-router.delete('/:id', deleteCarById);
+router.delete('/:id',authenticateToken, deleteCarById);
 
 export default router;
