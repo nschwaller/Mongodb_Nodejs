@@ -3,6 +3,9 @@ import express, { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import userRoute from './routes/userRoute';
 import carRoute from './routes/carRoute';
+import fs from 'fs';
+import path from 'path';
+import morgan from 'morgan';
 
 const app = express();
 
@@ -16,6 +19,14 @@ db.once('open', () => console.log('Connecté à MongoDB !'));
 
 // Définition de la route racine
 app.use(express.json());
+
+// Définit le chemin du fichier de log
+const logDirectory = path.join(__dirname, 'logs');
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+const logFilePath = path.join(logDirectory, 'api.log');
+const accessLogStream = fs.createWriteStream(logFilePath, { flags: 'a' });
+
+app.use(morgan('combined', { stream: accessLogStream }));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
