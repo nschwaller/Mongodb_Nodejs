@@ -11,6 +11,50 @@ const isValidEmail = (email: string): boolean => {
 };
 
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *         email:
+ *           type: string
+ */
+
+
+
+/**
+ * @swagger
+ * /api/users/login:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Connecte un utilisateur existant.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginRequest'
+ *     responses:
+ *       200:
+ *         description: Connexion réussie.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *       401:
+ *         description: Identifiants invalides.
+ *       500:
+ *         description: Erreur serveur.
+ */
 // POST - Connexion (login) de l'utilisateur
 export const loginUser = async (req: Request, res: Response): Promise<Response> => {
   try {
@@ -37,6 +81,37 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
   }
 };
 
+/**
+ * @swagger
+ * /api/users/:
+ *   post:
+ *     tags: [User]
+ *     summary: Crée un nouvel utilisateur.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       201:
+ *         description: Utilisateur créé avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *       400:
+ *         description: Requête invalide (e.g., email invalide, mot de passe trop court).
+ *       409:
+ *         description: Un utilisateur avec cet email existe déjà.
+ *       500:
+ *         description: Erreur serveur.
+ */
 
 // POST - Créer un nouvel utilisateur
 export const createUser = async (req: Request, res: Response): Promise<Response> => {
@@ -71,7 +146,31 @@ export const createUser = async (req: Request, res: Response): Promise<Response>
   }
 };
 
-
+/**
+ * @swagger
+ * tags:
+ *   name: User
+ *   description: Opérations liées aux utilisateurs
+ * /api/users:
+ *   get:
+ *     summary: Récupère tous les utilisateurs.
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste de tous les utilisateurs.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Non autorisé (jeton invalide ou expiré).
+ *       500:
+ *         description: Erreur serveur.
+ */
 // GET - Récupérer tous les utilisateurs
 export const getAllUsers = async (_req: Request, res: Response): Promise<Response> => {
   try {
@@ -82,7 +181,35 @@ export const getAllUsers = async (_req: Request, res: Response): Promise<Respons
   }
 };
 
-
+/**
+ * @swagger
+ * /api/users/{userId}:
+ *   get:
+ *     summary: Récupère un utilisateur par son ID.
+ *     tags: [User]
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID de l'utilisateur à récupérer.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Utilisateur récupéré avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Non autorisé (jeton invalide ou expiré).
+ *       404:
+ *         description: Utilisateur non trouvé.
+ *       500:
+ *         description: Erreur serveur.
+ */
 // GET - Récupérer un utilisateur par son ID
 export const getUserById = async (req: Request, res: Response): Promise<Response> => {
   try {
@@ -99,7 +226,43 @@ export const getUserById = async (req: Request, res: Response): Promise<Response
   }
 };
 
-
+/**
+ * @swagger
+ * /api/users/{userId}:
+ *   put:
+ *     tags: [User]
+ *     summary: Met à jour un utilisateur existant.
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID de l'utilisateur à mettre à jour.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Utilisateur mis à jour avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Requête invalide (e.g., email invalide).
+ *       401:
+ *         description: Non autorisé (jeton invalide ou expiré).
+ *       404:
+ *         description: Utilisateur non trouvé.
+ *       500:
+ *         description: Erreur serveur.
+ */
 // PUT - Mettre à jour un utilisateur par son ID
 export const updateUserById = async (req: Request, res: Response): Promise<Response> => {
   try {
@@ -122,6 +285,38 @@ export const updateUserById = async (req: Request, res: Response): Promise<Respo
   }
 };
 
+/**
+ * @swagger
+ * /api/users/{userId}:
+ *   delete:
+ *     tags: [User]
+ *     summary: Supprime un utilisateur existant.
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID de l'utilisateur à supprimer.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Utilisateur supprimé avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       401:
+ *         description: Non autorisé (jeton invalide ou expiré).
+ *       404:
+ *         description: Utilisateur non trouvé.
+ *       500:
+ *         description: Erreur serveur.
+ */
 // DELETE - Supprimer un utilisateur par son ID
 export const deleteUserById = async (req: Request, res: Response): Promise<Response> => {
   try {
