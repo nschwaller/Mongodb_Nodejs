@@ -1,6 +1,7 @@
 import 'tsconfig-paths/register';
 import express, { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
+import userRoute from './routes/userRoute';
 import carRoute from './routes/carRoute';
 
 const app = express();
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
 app.get('/', (req: Request, res: Response) => {
   res.send('Bonjour, ceci est une application de base Node.js avec une connexion à MongoDB à l\'aide de Mongoose.');
 });
+app.use('/api/users', userRoute);
 app.use('/api/car', carRoute);
 
 
