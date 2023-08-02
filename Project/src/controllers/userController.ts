@@ -37,7 +37,7 @@ const isValidEmail = (email: string): boolean => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/LoginRequest'
+ *             $ref: '#/components/schemas/User'
  *     responses:
  *       200:
  *         description: Connexion réussie.
