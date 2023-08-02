@@ -3,7 +3,7 @@ import app from '../src/app';
 import User, { IUser } from '../src/models/User';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-import '@types/jest';
+// import '@types/jest';
 
 describe('UserController', () => {
   let jwt_secret = 'your-secret-key';
